@@ -11,12 +11,12 @@
     color: #dcdcdc !important;
   }
 
-  .backgroundblue {
-    background-color: #3482F6 !important;
+  .backgroundorange {
+    background-color: #ff6600 !important;
   }
   
-  .hover\:backgroundblue:hover {
-    background-color: #3482F6 !important;
+  .hover\:backgroundorange:hover {
+    background-color: #ff6600 !important;
   }
   
   .textcrimson{

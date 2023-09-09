@@ -4,10 +4,6 @@ import { Inter } from "next/font/google";
 import Link from "next/link";
 import Image from "next/image";
 import localFont from "@next/font/local";
-import "@fortawesome/fontawesome-svg-core/styles.css";
-import { IconProp } from "@fortawesome/fontawesome-svg-core";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faMobileAndroidAlt } from "@fortawesome/free-solid-svg-icons";
 import Header from "./header";
 import { MainContent } from "./maincontent";
 

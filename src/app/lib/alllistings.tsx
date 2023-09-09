@@ -1,7 +1,8 @@
 "use client";
 import { addCommas, useMyListingsData } from "@/app/helper/listingcontext";
 import { useEffect, useMemo, useRef, useState } from "react";
-import {QueryClient,useQuery,
+import {
+  QueryClient, useQuery,
 } from "react-query";
 import axios, { AxiosResponse } from "axios";
 import ReactPaginate from "react-paginate";
@@ -12,7 +13,7 @@ import Image from "next/image";
 import Link from "next/link";
 import motorcross from "../../../public/classes/Motocross-Kids-scaled-1.jpg"
 const slugify = require('slugify')
-
+const truncate = require("truncate");
 export interface QueryParams {
   start_limit: number;
   paginationsize: number;
@@ -21,28 +22,29 @@ export interface QueryParams {
   search_item: string;
 
 }
- type CategoryType = {
-    category: string;
-    title: string;
-    category2: string;
-  }
+type CategoryType = {
+  category: string;
+  title: string;
+  category2: string;
+}
 export interface Listings {
   listing_id: number,
-title: string,
-description: string,
-price: number,
-available_from: string,
-available_to: string,
-images: string,
-maximum_riders: number,
-location: string,
-min_riders: number,
-category_id_listed: number,
-status: string,
-owner_id: number,
-listing_created_at: string,
-listing_updated_at: string,
-map_link: string
+  title: string,
+  description: string,
+  price: number,
+  available_from: string,
+  available_to: string,
+  images: string,
+  maximum_riders: number,
+  location: string,
+  min_riders: number,
+  category_id_listed: number,
+  status: string,
+  owner_id: number,
+  listing_created_at: string,
+  listing_updated_at: string,
+  map_link: string,
+  category_name: string
 }
 
 interface ListingResponse {
@@ -123,7 +125,7 @@ function ListingsList({ searchParams }: { searchParams: QueryParams }) {
   const parsedFavouriteData: any = storagefavourite
     ? JSON.parse(storagefavourite)
     : null;
- 
+
   const previousDataKey = useMemo(
     () => [
       "products",
@@ -205,8 +207,8 @@ function ListingsList({ searchParams }: { searchParams: QueryParams }) {
 
   useEffect(() => {
     if (datatrue && tabledata) {
-      
-     
+
+      setCachedTable(tabledata)
       setChangingpopularitem(favouriteDataReturned);
       setDatatrue(false);
     }
@@ -259,18 +261,10 @@ function ListingsList({ searchParams }: { searchParams: QueryParams }) {
     setstart_limit(newOffset);
   };
 
- 
- 
-  
-  const categories: CategoryType[] = [
-    { category: "Beef", title: "Beef Products", category2: "BEEF" },
-    { category: "Goat", title: "Goat Products", category2: "GOAT" },
-    { category: "Lamb", title: "Lamb Products", category2: "LAMB" },
-    { category: "Offals", title: "Offals", category2: "OFFALS" },
-    { category: "By Products", title: "By Products", category2: "BY PRODUCTS" },
-    { category: "Value Adds", title: "Value Adds", category2: "VALUE ADDS" },
-    { category: "Favourites", title: "Favourite Products", category2: "FAVOURITES" },
-  ];
+
+
+
+
   const ref = useRef<HTMLDivElement>(null);
 
   const Productswithimage: React.FC<Listings> = ({
@@ -292,79 +286,81 @@ function ListingsList({ searchParams }: { searchParams: QueryParams }) {
     map_link
   }) => (
     <>
-  
-        <div className=" relative rounded overflow-hidden shadow-sm m-auto border border-1 border-grey-100">
-       
-         
-        </div>
-      
+
+      <div className=" relative rounded overflow-hidden shadow-sm m-auto border border-1 border-grey-100">
+
+
+      </div>
+
     </>
   );
 
   return (
     <>
-   
-     
-      <div className="flex flex-wrap justify-center">
-        <>
-          {error && (
-            <div className={`${styles.textcrimson} font-medium m-20`}>
-              An error has occurred: {error.message}
-            </div>
-          )}
-          
 
-          
-         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-2">
+      <>
+        {error && (
+          <div className={`${styles.textcrimson} font-medium m-20`}>
+            An error has occurred: {error.message}
+          </div>
+        )}
+
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+
           {cachedTable.map((tabledatanow: any, i: any) => (
             <div key={i} className="rounded-[20px] overflow-hidden shadow-sm">
-            <Image
-              src={motorcross}
-              alt="motorcross"
-              width={1200}
-              height={630}
-              priority
-            />
-            <div className="more-photos__body more-photos__body_c">
-              <a
-                href="https://offroadadventure.co.ke/school-news/offroad-school/"
-                className="more-photos__title"
-              >
-                OFFROAD SCHOOL
-              </a>
-              <div className="more-photos__text">
-                We specialize in professional training and development for
-                motocross, enduro and adventure riding skills and technique.
-                Our school nurtures talent for adults and kids as young as 5
-                years old.
+              <Link href={`/listings/${slugify(tabledatanow.category_name, { lower: true, remove: /[*+~.()'"!:@]/g })}/${slugify(tabledatanow.title, { lower: true, remove: /[*+~.()'"!:@]/g })}/${tabledatanow.listing_id}`}
+                   className="more-photos__title">
+              <Image
+                src={`/classes/${tabledatanow.images}`}
+                alt="motorcross"
+                width={1200}
+                height={630}
+                priority
+              />
+              </Link>
+              <div className="more-photos__body more-photos__body_c">
+               
+                  <Link href={`/listings/${slugify(tabledatanow.category_name, { lower: true, remove: /[*+~.()'"!:@]/g })}/${slugify(tabledatanow.title, { lower: true, remove: /[*+~.()'"!:@]/g })}/${tabledatanow.listing_id}`}
+                   className="more-photos__title">
+                  <span className="line-clamp-1">
+                 {tabledatanow.title}
+                 </span>
+                 </Link>
+              
+                <div className="more-photos__text">
+                  <span className="line-clamp-4">
+                {tabledatanow.description}
+                </span>
+                </div>
               </div>
             </div>
-          </div>
 
           ))}
-          </div>
-        </>
-      </div>
+        </div>
+      </>
+
       {data ? (
         <>
-          <div className="pagination-container flex justify-center mt-2">
+          <div className="pagination-container flex justify-center mt-10">
             <div className="sm:hidden md:hidden lg:hidden">
               <ReactPaginate
                 previousLabel={<span>&lt;</span>}
                 nextLabel={<span>&gt;</span>}
                 breakLabel="..."
-                breakClassName="flex items-center justify-center px-2 py-1 mx-1 text-sm font-medium text-gray-500 bg-white border border-gray-200 shadow-sm rounded-md hover:bg-gray-200"
+                breakClassName="flex items-center justify-center px-4 py-2 mx-1 text-lg font-medium text-gray-500 bg-white border border-gray-200 shadow-sm rounded-md hover:bg-gray-200"
                 pageCount={pageCount}
                 marginPagesDisplayed={0}
                 pageRangeDisplayed={2}
                 onPageChange={handlePageClick}
                 forcePage={pageCount > 0 ? currentPage : -1} // Prop to control the current page
                 containerClassName="flex items-center"
-                activeClassName={`${styles.backgroundblue} hover:${styles.backgroundblue} px-2 py-1 mx-1`}
-                pageClassName="flex items-center justify-center px-2 py-1 mx-1 text-sm font-medium text-gray-500 bg-white border border-gray-200 shadow-sm rounded-md hover:bg-gray-200"
+                activeClassName={`${styles.backgroundorange} hover:${styles.backgroundorange} px-4 py-2 mx-1`}
+                pageClassName="flex items-center justify-center px-4 py-2 mx-1 text-lg font-medium text-gray-500 bg-white border border-gray-200 shadow-sm rounded-md hover:bg-gray-200"
                 pageLinkClassName="text-gray-500"
-                previousClassName="flex items-center justify-center px-2 py-1 mx-1 text-sm font-medium text-gray-500 bg-white border border-gray-200 shadow-sm rounded-md"
-                nextClassName="flex items-center justify-center px-2 py-1 mx-1 text-sm font-medium text-gray-500 bg-white border border-gray-200 shadow-sm rounded-md"
+                previousClassName="flex items-center justify-center px-4 py-2 mx-1 text-lg font-medium text-gray-500 bg-white border border-gray-200 shadow-sm rounded-md"
+                nextClassName="flex items-center justify-center px-4 py-2 mx-1 text-lg font-medium text-gray-500 bg-white border border-gray-200 shadow-sm rounded-md"
                 previousLinkClassName="text-gray-500"
                 nextLinkClassName="text-gray-500"
                 activeLinkClassName={`${styles.textwhitenow}`} // Apply the white text color to the active page link
@@ -376,18 +372,18 @@ function ListingsList({ searchParams }: { searchParams: QueryParams }) {
                 previousLabel={<span>&lt;</span>}
                 nextLabel={<span>&gt;</span>}
                 breakLabel="..."
-                breakClassName="flex items-center justify-center px-2 py-1 mx-1 text-sm font-medium text-gray-500 bg-white border border-gray-200 shadow-sm rounded-md hover:bg-gray-200"
+                breakClassName="flex items-center justify-center px-4 py-2 mx-1 text-lg font-medium text-gray-500 bg-white border border-gray-200 shadow-sm rounded-md hover:bg-gray-200"
                 pageCount={pageCount}
                 marginPagesDisplayed={1}
                 pageRangeDisplayed={3}
                 onPageChange={handlePageClick}
                 forcePage={pageCount > 0 ? currentPage : -1} // Prop to control the current page
                 containerClassName="flex items-center"
-                activeClassName={`${styles.backgroundblue} hover:${styles.backgroundblue} px-2 py-1 mx-1`}
-                pageClassName="flex items-center justify-center px-2 py-1 mx-1 text-sm font-medium text-gray-500 bg-white border border-gray-200 shadow-sm rounded-md hover:bg-gray-200"
+                activeClassName={`${styles.backgroundorange} hover:${styles.backgroundorange} px-4 py-2 mx-1`}
+                pageClassName="flex items-center justify-center px-4 py-2 mx-1 text-lg font-medium text-gray-500 bg-white border border-gray-200 shadow-sm rounded-md hover:bg-gray-200"
                 pageLinkClassName="text-gray-500"
-                previousClassName="flex items-center justify-center px-2 py-1 mx-1 text-sm font-medium text-gray-500 bg-white border border-gray-200 shadow-sm rounded-md"
-                nextClassName="flex items-center justify-center px-2 py-1 mx-1 text-sm font-medium text-gray-500 bg-white border border-gray-200 shadow-sm rounded-md"
+                previousClassName="flex items-center justify-center px-4 py-2 mx-1 text-lg font-medium text-gray-500 bg-white border border-gray-200 shadow-sm rounded-md"
+                nextClassName="flex items-center justify-center px-4 py-2 mx-1 text-lg font-medium text-gray-500 bg-white border border-gray-200 shadow-sm rounded-md"
                 previousLinkClassName="text-gray-500"
                 nextLinkClassName="text-gray-500"
                 activeLinkClassName={`${styles.textwhitenow}`} // Apply the white text color to the active page link
@@ -407,7 +403,7 @@ export const fetchProducts = async (
   queryParams: QueryParams
 ): Promise<ListingResponse> => {
   try {
-    const {  ...otherParams } = queryParams;
+    const { ...otherParams } = queryParams;
     const serializedParams = {
       ...otherParams
     };

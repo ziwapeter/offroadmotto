@@ -7062,7 +7062,7 @@ body:not(.lg-from-hash) .lg-outer.lg-start-zoom .lg-item.lg-complete .lg-object 
 }
 
 .more-photos__text {
-  padding-top: calc(10px + 20 * ((100vw - 320px) / 1600));
+  padding-top: calc(((100vw - 320px) / 1600));
   font-size: calc(16px + 4 * ((100vw - 320px) / 1600));
   color: rgba(34, 34, 34, 0.5);
 }
